@@ -21,7 +21,7 @@ class City:
                 self.neighbours.append(city)
 
     def check_if_neighbour(self, city):
-        return abs(abs(self.x - city.x) + abs(self.y - city.y)) == 1
+        return abs(self.x - city.x) + abs(self.y - city.y) == 1
 
     def set_motifs_number(self, motifs_number):
         self.motifs_number = motifs_number
