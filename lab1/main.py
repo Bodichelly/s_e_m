@@ -72,10 +72,7 @@ def create_countries(counties_data):
 
 
 def create_country_cities(coordinates, country_name):
-    x_ll = coordinates[0]
-    y_ll = coordinates[1]
-    x_ur = coordinates[2]
-    y_ur = coordinates[3]
+    x_ll, y_ll, x_ur, y_ur = coordinates
 
     cities = []
     for x in range(x_ll, x_ur + 1):
