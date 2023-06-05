@@ -27,7 +27,43 @@ def process_file(file_name):
     return input_data
 
 
+def has_possible_coordinates(coordinates):
+    if len(coordinates) < 4:
+        return False
+    x_ll, y_ll, x_ur, y_ur = coordinates
+    return x_ll < x_ur and y_ll < y_ur
+
+
+def has_collision(countries_data):
+    for target_country_name, target_country_coords in countries_data.items():
+        x_ll_target, y_ll_target, x_ur_target, y_ur_target = target_country_coords
+
+        for current_country_name, current_country_coords in countries_data.items():
+            if target_country_name != current_country_name:
+                x_ll_current, y_ll_current, x_ur_current, y_ur_current = current_country_coords
+
+                if (
+                        x_ll_target < x_ur_current
+                        and x_ur_target > x_ll_current
+                        and y_ll_target < y_ur_current
+                        and y_ur_target > y_ll_current
+                ):
+                    return True
+
+    return False
+
+
+def check_coordinates(counties_data):
+    for country_name, coordinates in counties_data.items():
+        if not has_possible_coordinates(coordinates):
+            raise Exception('Invalid coordinates')
+
+    if has_collision(counties_data):
+        raise Exception('Countries collision')
+
+
 def process_case(case_data):
+    check_coordinates(case_data)
     countries = create_countries(case_data)
 
     while True:
