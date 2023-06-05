@@ -3,7 +3,7 @@ ORIGINAL_COINS_AMOUNT = 1000000
 
 
 class City:
-    def __init__(self, x, y, country_name):
+    def __init__(self, x, y, country_name, motifs_number=0):
         self.x = x
         self.y = y
         self.coins = {
@@ -14,6 +14,7 @@ class City:
         self.country_name = country_name
         self.motifs_number = 0
         self.neighbours = []
+        self.motifs_number = motifs_number
 
     def add_neighbours(self, city_list):
         for city in city_list:
@@ -22,9 +23,6 @@ class City:
 
     def check_if_neighbour(self, city):
         return abs(self.x - city.x) + abs(self.y - city.y) == 1
-
-    def set_motifs_number(self, motifs_number):
-        self.motifs_number = motifs_number
 
     def add_coins(self, coins_dict):
         for country_name, coins_num in coins_dict.items():
