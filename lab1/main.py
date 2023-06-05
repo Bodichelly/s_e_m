@@ -51,15 +51,15 @@ def print_case_results(countries):
 def create_countries(counties_data):
     countries = []
     cities = []
+    motifs_number = len(counties_data)
     for country_name, coordinates in counties_data.items():
         country = Country(country_name)
-        country_cities = create_country_cities(coordinates, country_name)
+        country_cities = create_country_cities(coordinates, country_name, motifs_number)
         cities += country_cities
         country.cities = country_cities
         countries.append(country)
 
     for city in cities:
-        city.set_motifs_number(len(countries))
         city.add_neighbours(cities)
 
     for city in cities:
@@ -71,13 +71,13 @@ def create_countries(counties_data):
     return countries
 
 
-def create_country_cities(coordinates, country_name):
+def create_country_cities(coordinates, country_name, motifs_number=0):
     x_ll, y_ll, x_ur, y_ur = coordinates
 
     cities = []
     for x in range(x_ll, x_ur + 1):
         for y in range(y_ll, y_ur + 1):
-            cities.append(City(x, y, country_name))
+            cities.append(City(x, y, country_name, motifs_number))
 
     return cities
 
