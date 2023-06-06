@@ -21,6 +21,14 @@ class City:
             if city not in self.neighbours and self.check_if_neighbour(city):
                 self.neighbours.append(city)
 
+    def get_foreign_neighbours(self):
+        foreign_neighbours = []
+        for neighbour in self.neighbours:
+            if neighbour.country_name != self.country_name:
+                foreign_neighbours.append([self.country_name, neighbour.country_name])
+        return foreign_neighbours
+
+
     def check_if_neighbour(self, city):
         return abs(self.x - city.x) + abs(self.y - city.y) == 1
 
