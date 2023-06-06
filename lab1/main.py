@@ -1,5 +1,6 @@
 from city import City
 from country import Country
+import networkx as nx
 
 FILE_NAME = 'input.txt'
 
@@ -31,7 +32,7 @@ def has_possible_coordinates(coordinates):
     if len(coordinates) < 4:
         return False
     x_ll, y_ll, x_ur, y_ur = coordinates
-    return x_ll < x_ur and y_ll < y_ur
+    return x_ll <= x_ur and y_ll <= y_ur
 
 
 def has_collision(countries_data):
@@ -53,13 +54,42 @@ def has_collision(countries_data):
     return False
 
 
-def check_coordinates(counties_data):
-    for country_name, coordinates in counties_data.items():
+def check_coordinates(countries_data):
+    for country_name, coordinates in countries_data.items():
         if not has_possible_coordinates(coordinates):
             raise Exception('Invalid coordinates')
 
-    if has_collision(counties_data):
+    if has_collision(countries_data):
         raise Exception('Countries collision')
+
+
+def get_country_neighbors(countries_data):
+    neighbors = []
+
+    for country_name, country_coords in countries_data.items():
+        current_neighbors = []
+        for neighbor_name, neighbor_coords in countries_data.items():
+            if neighbor_name != country_name:
+                if (
+                    abs(country_coords[0] - neighbor_coords[2]) == 1 or  # Check x distance
+                    abs(country_coords[2] - neighbor_coords[0]) == 1 or  # Check x distance (reverse order)
+                    abs(country_coords[1] - neighbor_coords[3]) == 1 or  # Check y distance
+                    abs(country_coords[3] - neighbor_coords[1]) == 1     # Check y distance (reverse order)
+                ):
+                    current_neighbors.append(neighbor_name)
+
+        neighbors.append(current_neighbors)
+
+    return neighbors
+
+def check_if_all_countries_accessible(countries_names, countries_neighbours):
+    countries_graph = nx.Graph()
+    countries_graph.add_nodes_from(countries_names)
+    countries_graph.add_edges_from(countries_neighbours)
+    if not nx.is_connected(countries_graph):
+        raise Exception("Some countries are not accessible")
+
+
 
 
 def process_case(case_data):
@@ -84,11 +114,11 @@ def print_case_results(countries):
         print(country_result[0], country_result[1])
 
 
-def create_countries(counties_data):
+def create_countries(countries_data):
     countries = []
     cities = []
-    motifs_number = len(counties_data)
-    for country_name, coordinates in counties_data.items():
+    motifs_number = len(countries_data)
+    for country_name, coordinates in countries_data.items():
         country = Country(country_name)
         country_cities = create_country_cities(coordinates, country_name, motifs_number)
         cities += country_cities
@@ -97,6 +127,12 @@ def create_countries(counties_data):
 
     for city in cities:
         city.add_neighbours(cities)
+
+    countries_names = list(countries_data.keys())
+    all_cities_neighbours = [neighbours for city in cities for neighbours in city.get_foreign_neighbours()]
+    unique_city_neighbours = [list(sublist) for sublist in set(tuple(sublist) for sublist in all_cities_neighbours)]
+
+    check_if_all_countries_accessible(countries_names, unique_city_neighbours)
 
     for city in cities:
         city.set_complete_status()
